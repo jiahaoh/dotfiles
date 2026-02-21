@@ -1,0 +1,182 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$os\
+$directory\
+$git_branch\
+$git_status\
+$conda\
+$time\
+$cmd_duration\
+$line_break$character"""
+
+palette = 'gruvbox_dark'
+
+[os]
+disabled = false
+style = "fg:red"
+format = '[$symbol ]($style)'
+
+[os.symbols]
+Windows = "\uE62A"
+Ubuntu = "\uF31B"
+SUSE = "\uF314"
+Raspbian = "\uF315"
+Mint = "\uF30E"
+Macos = "\uF179"
+Manjaro = "\uF312"
+Linux = "\uE712"
+Gentoo = "\uF30D"
+Fedora = "\uF30A"
+Alpine = "\uF300"
+Amazon = "\uF270"
+Android = "\uE70E"
+Arch = "\uF303"
+Artix = "\uF303"
+CentOS = "\uF304"
+Debian = "\uF306"
+Redhat = "\uF316"
+RedHatEnterprise = "\uF316"
+
+[directory]
+style = "fg:peach"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "\u2026/"
+
+[directory.substitutions]
+"Documents" = "\uF0219 "
+"Downloads" = "\uF01DA "
+"Music" = "\uF0388 "
+"Pictures" = "\uF01C6 "
+"Developer" = "\uF0169 "
+
+[git_branch]
+symbol = "\uE0A0"
+style = "fg:yellow"
+format = " [$symbol $branch]($style)"
+
+[git_status]
+style = "fg:yellow"
+format = '[$all_status$ahead_behind]($style)'
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[conda]
+symbol = "\uF10C"
+style = "fg:sapphire"
+format = " [$symbol $environment]($style)"
+ignore_base = false
+
+[c]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[php]
+disabled = true
+
+[java]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[haskell]
+symbol = "\uE61F"
+style = "fg:green"
+format = " [$symbol $version]($style)"
+
+[docker_context]
+symbol = "\uE7B0"
+style = "fg:sapphire"
+format = " [$symbol $context]($style)"
+
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:overlay1"
+format = " [\uF017 $time]($style)"
+
+[line_break]
+disabled = false
+
+[character]
+disabled = false
+success_symbol = "[\u276F](bold fg:green)"
+error_symbol = "[\u276F](bold fg:red)"
+vimcmd_symbol = "[\u276E](bold fg:green)"
+vimcmd_replace_one_symbol = "[\u276E](bold fg:lavender)"
+vimcmd_replace_symbol = "[\u276E](bold fg:lavender)"
+vimcmd_visual_symbol = "[\u276E](bold fg:yellow)"
+
+[cmd_duration]
+show_milliseconds = true
+format = " [\uF017 $duration](fg:overlay1)"
+disabled = false
+show_notifications = true
+min_time_to_notify = 45000
+
+[palettes.gruvbox_dark]
+rosewater = "#d65d0e"
+flamingo = "#fe8019"
+pink = "#d3869b"
+mauve = "#b16286"
+red = "#fb4934"
+maroon = "#cc241d"
+peach = "#fe8019"
+yellow = "#fabd2f"
+green = "#b8bb26"
+teal = "#8ec07c"
+sky = "#83a598"
+sapphire = "#83a598"
+blue = "#458588"
+lavender = "#d3869b"
+text = "#ebdbb2"
+subtext1 = "#d5c4a1"
+subtext0 = "#bdae93"
+overlay2 = "#a89984"
+overlay1 = "#928374"
+overlay0 = "#7c6f64"
+surface2 = "#665c54"
+surface1 = "#504945"
+surface0 = "#3c3836"
+base = "#282828"
+mantle = "#1d2021"
+crust = "#1d2021"
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
