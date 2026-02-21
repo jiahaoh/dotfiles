@@ -6,3 +6,17 @@
 [user]
 	name = Jiahao Huang
 	email = 33877832+jiahaoh@users.noreply.github.com
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[core]
+	excludesfile = ~/.config/git/ignore
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true

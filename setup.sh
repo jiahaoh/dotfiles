@@ -58,7 +58,7 @@ install_packages_linux() {
     info "Updating apt package lists..."
     sudo apt-get update -y
 
-    local packages=(zsh stow tmux git-lfs curl gpg)
+    local packages=(zsh stow tmux git git-lfs curl gpg)
     info "Installing core packages via apt: ${packages[*]}"
     sudo apt-get install -y "${packages[@]}"
 

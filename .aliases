@@ -1,9 +1,3 @@
-#!/usr/bin/env zsh
-
-# Edit/Refresh .bash_profile
-# alias refreshp="source ~/.bash_profile"
-#alias refresha="source ~/.aliases"
-# alias ep="atom ~/.bash_profile"
 alias ea="code ~/.aliases"
 
 
@@ -24,27 +18,23 @@ alias dt="cd ~/Desktop"
 alias dc="cd ~/Documents"
 alias gt="cd ~/Desktop/Docs/GitHub"
 
-# # Bioinformatics
-# alias countfa="grep -c '^>'"
-# alias countfq="bioawk -cfastx 'END{print NR}'"
-
 # Jupyter Notebook
 alias jn="jupyter notebook"
 
 # Show the $PATH
 alias path='echo -e ${PATH//:/\\n}'
 
-# Open current folder in the finder
-alias opf='open -a Finder ./'
+# macOS-only aliases
+if [[ "$(uname)" == "Darwin" ]]; then
+    # Open current folder in the finder
+    alias opf='open -a Finder ./'
 
-# Open with TextEdit
-alias textedit='open -a TextEdit'
+    # Open with TextEdit
+    alias textedit='open -a TextEdit'
 
-# # Open with Atom
-# alias atom='open -a Atom'
-
-# Open with Typora
-alias typora='open -a Typora'
+    # Open with Typora
+    alias typora='open -a Typora'
+fi
 
 # Gruvbox Dark color theme for eza
 # Palette: red=#fb4934 green=#b8bb26 yellow=#fabd2f blue=#83a598
@@ -158,19 +148,6 @@ alias egrep='egrep --color=auto'
 
 # Enable aliases to be sudo'ed
 alias sudo='sudo '
-
-# # Get week number
-# alias week='date +%V'
-
-# # Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-# alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
-
-# # Hide/show all desktop icons (useful when presenting)
-# alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-# alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-
-# # Lock the screen (when going AFK)
-# alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 
 # SSH
 alias sshbroad='ssh jiahao@login.broadinstitute.org'

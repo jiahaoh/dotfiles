@@ -90,16 +90,6 @@ disabled = true
 [kotlin]
 disabled = true
 
-[haskell]
-symbol = "\uE61F"
-style = "fg:green"
-format = " [$symbol $version]($style)"
-
-[docker_context]
-symbol = "\uE7B0"
-style = "fg:sapphire"
-format = " [$symbol $context]($style)"
-
 [time]
 disabled = false
 time_format = "%R"
@@ -152,31 +142,3 @@ surface0 = "#3c3836"
 base = "#282828"
 mantle = "#1d2021"
 crust = "#1d2021"
-
-[palettes.catppuccin_mocha]
-rosewater = "#f5e0dc"
-flamingo = "#f2cdcd"
-pink = "#f5c2e7"
-mauve = "#cba6f7"
-red = "#f38ba8"
-maroon = "#eba0ac"
-peach = "#fab387"
-yellow = "#f9e2af"
-green = "#a6e3a1"
-teal = "#94e2d5"
-sky = "#89dceb"
-sapphire = "#74c7ec"
-blue = "#89b4fa"
-lavender = "#b4befe"
-text = "#cdd6f4"
-subtext1 = "#bac2de"
-subtext0 = "#a6adc8"
-overlay2 = "#9399b2"
-overlay1 = "#7f849c"
-overlay0 = "#6c7086"
-surface2 = "#585b70"
-surface1 = "#45475a"
-surface0 = "#313244"
-base = "#1e1e2e"
-mantle = "#181825"
-crust = "#11111b"
