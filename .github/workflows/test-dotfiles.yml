@@ -1,0 +1,52 @@
+name: Test dotfiles setup
+
+on: [push, workflow_dispatch]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run setup
+        run: bash setup.sh
+
+      - name: Verify installed tools
+        run: |
+          echo "--- Checking commands ---"
+          for cmd in zsh stow tmux git-lfs eza gh starship; do
+            if command -v "$cmd" &>/dev/null; then
+              printf "%-12s OK (%s)\n" "$cmd" "$(command -v "$cmd")"
+            else
+              printf "%-12s MISSING\n" "$cmd"
+              exit 1
+            fi
+          done
+          # conda/mamba are only on PATH after .zshrc shell init
+          test -x ~/miniforge3/bin/conda && printf "%-12s OK\n" "conda"
+          test -x ~/miniforge3/bin/mamba && printf "%-12s OK\n" "mamba"
+
+      - name: Verify TPM installed
+        run: test -d ~/.tmux/plugins/tpm
+
+      - name: Verify stow symlinks
+        run: |
+          # Stow may symlink a parent dir (e.g. ~/.config) rather than
+          # individual files, so check that each path exists and resolves
+          # into the workspace (DOTFILES_DIR).
+          for f in .zshrc .aliases .gitconfig .config/tmux/tmux.conf; do
+            resolved=$(readlink -f "$HOME/$f")
+            if [[ "$resolved" == "$GITHUB_WORKSPACE/"* ]]; then
+              printf "%-30s -> %s\n" "~/$f" "$resolved"
+            else
+              echo "FAIL: ~/$f does not resolve into dotfiles repo (got $resolved)"
+              exit 1
+            fi
+          done
+
+      - name: Verify idempotent (run setup again)
+        run: bash setup.sh
