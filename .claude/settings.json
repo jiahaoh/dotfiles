@@ -21,5 +21,17 @@
     "superpowers@superpowers-marketplace": false,
     "context7@claude-plugins-official": true
   },
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tmux set message-style 'fg=#1a1a1a,bg=#cccccc,bold' && tmux display-message -t $TMUX_PANE -d 5000 '>>> Claude Code is ready for input (#{window_index}:#{window_name}) <<<'"
+          }
+        ]
+      }
+    ]
+  }
 }
