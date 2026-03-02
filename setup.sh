@@ -49,7 +49,7 @@ install_packages_macos() {
         info "Homebrew already installed"
     fi
 
-    local packages=(zsh stow tmux git-lfs eza gh starship curl)
+    local packages=(zsh stow tmux git-lfs eza gh starship curl tmuxinator)
     info "Installing packages via brew: ${packages[*]}"
     brew install --quiet "${packages[@]}"
 }
@@ -88,6 +88,18 @@ install_packages_linux() {
         sudo apt-get install -y gh
     else
         info "gh already installed"
+    fi
+
+    # tmuxinator — install via gem if missing
+    if ! command -v tmuxinator &>/dev/null; then
+        if command -v gem &>/dev/null; then
+            info "Installing tmuxinator via gem..."
+            gem install tmuxinator
+        else
+            warn "Ruby/gem not found — skipping tmuxinator (install ruby first)"
+        fi
+    else
+        info "tmuxinator already installed"
     fi
 
     # starship — install via official script if missing

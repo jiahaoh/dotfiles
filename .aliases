@@ -157,3 +157,6 @@ alias weather='curl wttr.in'
 
 # Claude Code
 alias ccx="claude --allow-dangerously-skip-permissions"
+
+# Tmuxinator
+alias mux="tmuxinator start"
