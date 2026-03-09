@@ -1,5 +1,5 @@
-alias ea="code ~/.aliases"
-
+# Aliases
+alias ea="cursor ~/.aliases"
 
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ~="cd ~"
@@ -7,16 +7,39 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-alias u="cd ..;ls"
 
-# Clear
+# list shortcuts
+alias l="eza --icons --long" # all files colorized in long format
+alias la="eza --icons --long --all" # all files colorized in long format, excluding . and ..
+alias lsd="eza --icons --long --only-dirs" # only directories
+alias ls="eza --icons" # always use color output and icons for `ls`
+
+# grep
+alias grep='grep --color=auto' # always enable colored `grep` output
+alias fgrep='fgrep --color=auto' # always enable colored `fgrep` output
+alias egrep='egrep --color=auto' # always enable colored `egrep` output
+
+# One letter shortcuts
 alias c="clear"
+alias v="nvim"
+alias t="task"
+alias x="tmux"
 
-# Shortcuts
-alias dl="cd ~/Downloads"
-alias dt="cd ~/Desktop"
-alias dc="cd ~/Documents"
-alias gt="cd ~/Desktop/Docs/GitHub"
+# navigation shortcuts
+alias gl="cd ~/Downloads"
+alias gd="cd ~/Desktop"
+alias gg="cd ~/Desktop/GitHub"
+
+# Claude Code
+alias ccx="claude --allow-dangerously-skip-permissions"
+ws() { claude -p "search the web for: $*, return top 5 results" --allowedTools "WebSearch,WebFetch" --model claude-haiku-4-5-20251001; }
+
+# tmux
+alias mux="tmuxinator start"
+
+# SSH
+alias ssh_broad_01='ssh jiahao@login01.broadinstitute.org'
+alias ssh_29c='ssh jiahao@gp099-29c'
 
 # Jupyter Notebook
 alias jn="jupyter notebook"
@@ -24,16 +47,20 @@ alias jn="jupyter notebook"
 # Show the $PATH
 alias path='echo -e ${PATH//:/\\n}'
 
+# Other
+alias weather='curl wttr.in'
+
+
 # macOS-only aliases
 if [[ "$(uname)" == "Darwin" ]]; then
     # Open current folder in the finder
     alias opf='open -a Finder ./'
 
-    # Open with TextEdit
-    alias textedit='open -a TextEdit'
+    # Open with Apps
+    alias opt='open -a TextEdit'
+    alias opc='open -a Google\ Chrome'
+    google() { open -a "Google Chrome" "https://www.google.com/search?q=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$*'))")"; }
 
-    # Open with Typora
-    alias typora='open -a Typora'
 fi
 
 # Gruvbox Dark color theme for eza
@@ -127,36 +154,3 @@ gc=38;2;251;73;52;1:\
 *.toml=38;2;250;189;47:\
 *.ini=38;2;250;189;47:\
 *.conf=38;2;250;189;47"
-
-# List all files colorized in long format
-alias l="eza --icons --long"
-
-# List all files colorized in long format, excluding . and ..
-alias la="eza --icons --long --all"
-
-# List only directories
-alias lsd="eza --icons --long --only-dirs"
-
-# Always use color output and icons for `ls`
-alias ls="eza --icons"
-
-# Always enable colored `grep` output
-# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
-# Enable aliases to be sudo'ed
-alias sudo='sudo '
-
-# SSH
-alias sshbroad='ssh jiahao@login.broadinstitute.org'
-
-# Other
-alias weather='curl wttr.in'
-
-# Claude Code
-alias ccx="claude --allow-dangerously-skip-permissions"
-
-# Tmuxinator
-alias mux="tmuxinator start"

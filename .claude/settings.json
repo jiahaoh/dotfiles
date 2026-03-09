@@ -12,6 +12,19 @@
     ],
     "defaultMode": "default"
   },
+  "model": "opus",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -n \"$TMUX\" && tmux set message-style 'fg=#1a1a1a,bg=#cccccc,bold' && tmux display-message -t $TMUX_PANE -d 5000 '>>> Claude Code is ready for input (#{window_index}:#{window_name}) <<<' || true"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline.sh"
@@ -22,16 +35,5 @@
     "context7@claude-plugins-official": true
   },
   "skipDangerousModePermissionPrompt": true,
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "tmux set message-style 'fg=#1a1a1a,bg=#cccccc,bold' && tmux display-message -t $TMUX_PANE -d 5000 '>>> Claude Code is ready for input (#{window_index}:#{window_name}) <<<'"
-          }
-        ]
-      }
-    ]
-  }
+  "effortLevel": "high"
 }
