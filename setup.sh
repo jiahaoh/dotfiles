@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh — Install dependencies and symlink dotfiles on macOS or Linux.
-# Usage: bash setup.sh
+# Usage: bash setup.sh [primary|full]
 
 set -euo pipefail
 
@@ -17,6 +17,83 @@ warn()  { printf "${YELLOW}[!]${NC} %s\n" "$*"; }
 error() { printf "${RED}[✗]${NC} %s\n" "$*"; }
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SETUP_PROFILE="${1:-full}"
+
+PRIMARY_DOTFILES=(
+    '.aliases'
+    '.bash_profile'
+    '.zprofile'
+    '.zshrc'
+    '.gitconfig'
+    '.config/git/ignore'
+    '.config/gh/config.yml'
+    '.config/starship.toml'
+)
+
+PRIMARY_DIRECTORY_IGNORES=(
+    '^\.ssh(/|$)'
+    '^\.claude(/|$)'
+    '^\.config/tmux(/|$)'
+)
+
+usage() {
+    cat <<'EOF'
+Usage: bash setup.sh [primary|full]
+
+Profiles:
+  primary  Portable shell and Git baseline for a new work laptop.
+           Installs core shell/Git tools and links only primary dotfiles.
+  full     Everything in primary, plus tmux, Miniforge, TPM, and all dotfiles.
+
+Default: full
+EOF
+}
+
+parse_args() {
+    case "$SETUP_PROFILE" in
+        primary|minimal)
+            SETUP_PROFILE="primary"
+            ;;
+        full)
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            error "Unknown setup profile: $SETUP_PROFILE"
+            usage
+            exit 1
+            ;;
+    esac
+}
+
+is_full_setup() {
+    [[ "$SETUP_PROFILE" == "full" ]]
+}
+
+is_primary_dotfile() {
+    local candidate="$1"
+    local primary_file
+    for primary_file in "${PRIMARY_DOTFILES[@]}"; do
+        [[ "$candidate" == "$primary_file" ]] && return 0
+    done
+    return 1
+}
+
+regex_escape() {
+    printf '%s' "$1" | sed -e 's/[.[\*^$()+?{}|]/\\&/g'
+}
+
+ensure_clean_worktree() {
+    cd "$DOTFILES_DIR"
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+        error "The dotfiles repo has uncommitted changes."
+        warn "Commit or stash them before setup; stow --adopt temporarily modifies tracked files."
+        git status --short
+        exit 1
+    fi
+}
 
 # ---------- detect_os ----------
 
@@ -49,7 +126,10 @@ install_packages_macos() {
         info "Homebrew already installed"
     fi
 
-    local packages=(zsh stow tmux git-lfs eza gh starship curl tmuxinator)
+    local packages=(zsh stow git-lfs eza gh starship)
+    if is_full_setup; then
+        packages+=(tmux tmuxinator jq zsh-autosuggestions zsh-syntax-highlighting curl)
+    fi
     info "Installing packages via brew: ${packages[*]}"
     brew install --quiet "${packages[@]}"
 }
@@ -58,7 +138,10 @@ install_packages_linux() {
     info "Updating apt package lists..."
     sudo apt-get update -y
 
-    local packages=(zsh stow tmux git git-lfs curl gpg)
+    local packages=(zsh stow git git-lfs curl gpg)
+    if is_full_setup; then
+        packages+=(tmux jq zsh-autosuggestions zsh-syntax-highlighting)
+    fi
     info "Installing core packages via apt: ${packages[*]}"
     sudo apt-get install -y "${packages[@]}"
 
@@ -90,16 +173,18 @@ install_packages_linux() {
         info "gh already installed"
     fi
 
-    # tmuxinator — install via gem if missing
-    if ! command -v tmuxinator &>/dev/null; then
-        if command -v gem &>/dev/null; then
-            info "Installing tmuxinator via gem..."
-            gem install tmuxinator
+    if is_full_setup; then
+        # tmuxinator — install via gem if missing
+        if ! command -v tmuxinator &>/dev/null; then
+            if command -v gem &>/dev/null; then
+                info "Installing tmuxinator via gem..."
+                gem install tmuxinator
+            else
+                warn "Ruby/gem not found — skipping tmuxinator (install ruby first)"
+            fi
         else
-            warn "Ruby/gem not found — skipping tmuxinator (install ruby first)"
+            info "tmuxinator already installed"
         fi
-    else
-        info "tmuxinator already installed"
     fi
 
     # starship — install via official script if missing
@@ -157,8 +242,26 @@ backup_and_stow() {
     # --adopt moves any conflicting real files into the dotfiles dir
     # (creating the symlinks), then we back up the adopted originals
     # and restore our versions via git.
-    info "Running stow..."
-    stow --adopt -t "$HOME" .
+    local stow_args=(--adopt -t "$HOME")
+    if ! is_full_setup; then
+        stow_args+=(--no-folding)
+        local ignore_dir
+        for ignore_dir in "${PRIMARY_DIRECTORY_IGNORES[@]}"; do
+            stow_args+=(--ignore="$ignore_dir")
+        done
+
+        local tracked_file
+        local escaped_file
+        while IFS= read -r tracked_file; do
+            if ! is_primary_dotfile "$tracked_file"; then
+                escaped_file="$(regex_escape "$tracked_file")"
+                stow_args+=(--ignore="^${escaped_file}$")
+            fi
+        done < <(git ls-files)
+    fi
+
+    info "Running stow ($SETUP_PROFILE profile)..."
+    stow "${stow_args[@]}" .
 
     local adopted
     adopted=$(git diff --name-only 2>/dev/null || true)
@@ -171,8 +274,8 @@ backup_and_stow() {
             mkdir -p "$backup_dir/$(dirname "$file")"
             cp "$file" "$backup_dir/$file"
             warn "Backed up $file"
+            git checkout -- "$file"
         done <<< "$adopted"
-        git checkout .
     fi
 
     info "Dotfiles symlinked successfully"
@@ -186,10 +289,19 @@ print_summary() {
     echo ""
     echo "Next steps:"
     echo "  1. Restart your shell (or run: exec zsh)"
-    echo "  2. Inside tmux, press prefix + I to install tmux plugins"
-    echo "  3. Authenticate GitHub CLI: gh auth login"
+    if is_full_setup; then
+        echo "  2. Inside tmux, press prefix + I to install tmux plugins"
+        echo "  3. Authenticate GitHub CLI: gh auth login"
+    else
+        echo "  2. Authenticate GitHub CLI: gh auth login"
+    fi
     echo ""
     echo "Optional (not installed by this script):"
+    if ! is_full_setup; then
+        echo "  - Full setup profile: bash setup.sh full"
+        echo "  - Miniforge3:         https://github.com/conda-forge/miniforge"
+        echo "  - tmux + TPM:         bash setup.sh full"
+    fi
     echo "  - Google Cloud SDK: https://cloud.google.com/sdk/docs/install"
     echo "  - Claude Code CLI:  npm install -g @anthropic-ai/claude-code"
     echo "  - VS Code:          https://code.visualstudio.com/"
@@ -204,10 +316,17 @@ main() {
     echo "─────────────────────────────"
     echo ""
 
+    parse_args
+    info "Using setup profile: $SETUP_PROFILE"
     detect_os
+    ensure_clean_worktree
     install_packages
-    install_miniforge
-    install_tpm
+    if is_full_setup; then
+        install_miniforge
+        install_tpm
+    else
+        info "Skipping Miniforge3 and TPM for primary setup"
+    fi
     backup_and_stow
     print_summary
 }

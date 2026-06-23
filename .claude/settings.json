@@ -12,7 +12,6 @@
     ],
     "defaultMode": "default"
   },
-  "model": "opus",
   "hooks": {
     "Stop": [
       {
@@ -34,6 +33,11 @@
     "superpowers@superpowers-marketplace": false,
     "context7@claude-plugins-official": true
   },
+  "effortLevel": "xhigh",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "effortLevel": "high"
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark-ansi",
+  "remoteControlAtStartup": false,
+  "voiceEnabled": false
 }
